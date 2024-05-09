@@ -1,5 +1,5 @@
 package victorvld.gameofthree.controller.dto;
 
-public record GameBoard(String currentNumber, String lastMove, String playerTurn, String gameMode) {
+public record GameBoard(Integer currentNumber, String lastMove, String playerTurn, String gameMode, String winner) {
 
 }

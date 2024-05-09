@@ -56,53 +56,71 @@ function start() {
     stompClient.send("/app/start", {}, payload);
 }
 
+function move(move) {
+    var payload = JSON.stringify({
+        move: move,
+    });
+    hideButtons();
+    displayOpponentTurnMessage();
+    stompClient.send("/app/move", {}, payload);
+}
+
 function handleGameEvent(message) {
     var data = JSON.parse(message.body);
-    var currentValue = parseInt(data.currentValue);
-    var turn = data.turn;
-
-    displayCurrentNumber(currentValue);
-    if (turn === "player2") {
+    var currentNumber = data.currentNumber;
+    var playerTurn = data.playerTurn;
+    displayCurrentNumber(currentNumber);
+    var winner = data.winner;
+    if (winner !== null) {
+        displayWinnerMessage(winner);
+        displayReloadGame();
+    } else if (playerTurn === "player2") {
         displayButtons();
-    } else if (turn === "player1") {
+        displayYourTurnMessage();
+    } else if (playerTurn === "player1") {
         displayOpponentTurnMessage();
+        hideButtons();
     }
 }
 
-function displayCurrentNumber(number) {
-    // Assuming you have a DOM element with id "currentNumber" to display the number
-    $("#currentNumber").text(number);
+function displayCurrentNumber(currentNumber) {
+    $("#currentNumber").text(currentNumber);
 }
 
 function displayButtons() {
-    // Show the buttons for player 1
-    $("#buttons").css("display", "block");
+    $("#moveButtonsRow").show()
+}
+
+function hideButtons() {
+    $("#moveButtonsRow").hide()
+}
+
+function displayYourTurnMessage() {
+    $("#boardMessage").text("It's your turn selec {-1,0,1} so that the current number is divisible by 3.");
 }
 
 function displayOpponentTurnMessage() {
-    // Display message for player 2
-    $("#opponentMessage").text("It's the turn of your opponent.");
+    $("#boardMessage").text("It's the turn of your opponent.");
+}
+
+function displayWinnerMessage(winner) {
+    $("#boardMessage").text("Game Concluded. The winner is " + winner);
+}
+
+function displayReloadGame() {
+    $("#reloadGameRow").show();
 }
 
 function sendMessage() {
     stompClient.send("/app/chat", {}, JSON.stringify({'content': $("#content").val()}));
 }
 
-function move(pileId) {
-    stompClient.send("/app/move", {}, pileId);
-}
-
 function showMessage(message) {
     $("#messages").append("<tr><td>" + message + "</td></tr>");
 }
 
-function drawGameBoard(message) {
-    $("#gameStatus").text(message.gameStatus);
-    $("#winner").text(message.winner);
-    piles = message.piles;
-    for (i=0; i<14; i++) {
-    	$("#"+i).text(piles[i]);
-    }
+function reloadGame() {
+    location.reload();
 }
 
 $(function () {
@@ -113,4 +131,5 @@ $(function () {
     $( "#disconnect" ).click(function() { disconnect(); });
     $( "#send" ).click(function() { sendMessage(); });
     $( "#start" ).click(function() { start(); });
+    $( "#reloadGame" ).click(function() { reloadGame(); });
 });
