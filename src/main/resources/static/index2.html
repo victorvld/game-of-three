@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mancala Game</title>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/main2.css" rel="stylesheet">
+<!--
+    <script src="/webjars/jquery/jquery.min.js"></script>
+-->
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/app2.js"></script>
+</head>
+<body>
+<noscript>
+    <h2 style="color: #ff0000">Seems your browser doesn't support
+        Javascript! Websocket relies on Javascript being enabled. Please
+        enable Javascript and reload this page!</h2>
+</noscript>
+<div id="main-content" class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-inline">
+                <div class="form-group">
+                    <h2>Game of Three Game</h2>
+                    <h2>Player 2</h2>
+                    <label for="connect">Connect to game server:</label>
+                    <button id="connect" class="btn btn-default" type="submit">Connect</button>
+                    <button id="disconnect" class="btn btn-default" type="submit"
+                            disabled="disabled">Disconnect
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-inline">
+                <div class="form-group">
+                    <button id="start" class="btn btn-default" type="submit">Start
+                        New Game
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="row row-centered">
+            <span id="gameStatus"></span> <span id="winner"></span>
+        </div>
+        <div class="row row-centered">
+            <div class="col-sm-2 col-centered">
+                <div class="row row-centered">
+                    <div class="text-block h3">CurrentValue</div>
+                </div>
+                <div class="row row-centered">
+                    <div id="currentNumber" class="text-block h2">*</div>
+                </div>
+                <div id="moveButtonsRow" class="row row-centered" style="display: none;">
+                    <div class="btn-group d-none">
+                        <button id="2" type="button" class="btn btn-primary custom" onclick="move(1)">1</button>
+                        <button id="1" type="button" class="btn btn-primary custom" onclick="move(0)">0</button>
+                        <button id="0" type="button" class="btn btn-primary custom" onclick="move(-1)">-1</button>
+                    </div>
+                </div>
+                <div class="row row-centered">
+                    <div id="boardMessage" class="text-block h4">Waiting for players to start a new game</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="conversation" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Game Messages</th>
+                </tr>
+                </thead>
+                <tbody id="messages">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
