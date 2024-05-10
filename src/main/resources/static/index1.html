@@ -12,14 +12,15 @@
 <body>
 <div id="main-content" class="container">
     <div class="row">
-        <div class="col-md-6">
+        <h2>Player 1 : Game of Three</h2>
+    </div>
+    <div class="row connect-row">
+        <div class="col-md-12">
             <form class="form-inline">
                 <div class="form-group">
-                    <h1>Game of Three</h1>
-                    <h2>Player 1</h2>
-                    <label for="connect">Connect to game server:</label>
-                    <button id="connect" class="btn btn-default" type="submit">Connect</button>
-                    <button id="disconnect" class="btn btn-default" type="submit"
+                    <label for="connect" class="mr-2">Connect to game server:</label>
+                    <button id="connect" class="btn btn-primary mr-2" type="submit">Connect</button>
+                    <button id="disconnect" class="btn btn-secondary" type="submit"
                             disabled="disabled">Disconnect
                     </button>
                 </div>
@@ -30,14 +31,12 @@
         <div class="col-md-6">
             <form class="form-inline">
                 <div class="form-group">
-                    <button id="start" class="btn btn-default" type="submit">Start
-                        New Game
-                    </button>
+                    <button id="start" class="btn btn-success" type="submit" disabled="disabled">Start New Game</button>
                 </div>
             </form>
         </div>
     </div>
-    <div class="row">
+    <div class="row board-row">
         <div class="row row-centered">
             <span id="gameStatus"></span> <span id="winner"></span>
         </div>
@@ -49,7 +48,7 @@
                 <div class="row row-centered">
                     <div id="currentNumber" class="text-block h2">*</div>
                 </div>
-                <div id="moveButtonsRow" class="row row-centered" style="display: none;">
+                <div id="moveButtonsRow" class="row row-centered" style="visibility: hidden;">
                     <div class="btn-group">
                         <button id="2" type="button" class="btn btn-primary custom" onclick="move(1)">1</button>
                         <button id="1" type="button" class="btn btn-primary custom" onclick="move(0)">0</button>
@@ -59,7 +58,7 @@
                 <div class="row row-centered">
                     <div id="boardMessage" class="text-block h4">Waiting for players to start a new game</div>
                 </div>
-                <div id="reloadGameRow" class="row row-centered" style="display: none;">
+                <div id="reloadGameRow" class="row row-centered" style="visibility: hidden;">
                     <button id="reloadGame" type="button" class="btn btn-primary custom" onclick="reloadGame()">Reload Game</button>
                 </div>
             </div>

@@ -4,6 +4,7 @@ const MAX_VALUE = 100;
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
+    $("#start").prop("disabled", !connected);
     if (connected) {
         $("#conversation").show();
     }
@@ -100,11 +101,11 @@ function displayCurrentNumberAsDraw() {
 }
 
 function displayButtons() {
-    $("#moveButtonsRow").show()
+    $("#moveButtonsRow").css("visibility", "visible");
 }
 
 function hideButtons() {
-    $("#moveButtonsRow").hide()
+    $("#moveButtonsRow").css("visibility", "hidden");
 }
 
 function disableStartButton() {
@@ -116,7 +117,7 @@ function disableDisconnectButton() {
 }
 
 function displayYourTurnMessage() {
-    $("#boardMessage").text("It's your turn select any of these numbers {-1,0,1} so that the current number is divisible by 3.");
+    $("#boardMessage").text("Choose a number from {-1, 0, 1} to make the current number divisible by 3");
 }
 
 function displayOpponentTurnMessage() {
@@ -132,7 +133,7 @@ function displayDrawMessage() {
 }
 
 function displayReloadGame() {
-    $("#reloadGameRow").show();
+    $("#reloadGame").css("visibility", "visible");
 }
 
 function sendMessage() {
