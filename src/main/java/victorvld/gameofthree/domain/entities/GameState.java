@@ -12,6 +12,7 @@ public class GameState {
     private String winner;
     private Player currentTurn;
     private Integer number;
+    private Integer restNumber;
     private String lastMove;
 
     public GameState() {
@@ -36,6 +37,7 @@ public class GameState {
     public GameBoard generateBoardSnapshot() {
         return new GameBoard(
                 this.number,
+                this.restNumber,
                 this.lastMove,
                 this.currentTurn.getName(),
                 mode.getMode(),
@@ -60,13 +62,21 @@ public class GameState {
     }
 
     public void applyMove(int move) {
+        this.restNumber = (number + move) % 3;
         this.number = (number + move) / 3;
-        if (number == 1) {
+        if (number == 1 && this.restNumber == 0) {
             this.status = GameStatus.FINISHED;
             this.winner = currentTurn.getName();
             this.lastMove = "%s made a move of %s and win the game".formatted(currentTurn.getName(), move);
             this.players.clear();
-        } else {
+        } else if (number < 2) {
+            // Here we are covering cases where the number 1 can't be reached but the game cannot be finished. Therefore, we consider it a draw.
+            this.status = GameStatus.FINISHED;
+            this.winner = "draw";
+            this.lastMove = "The game ends in a draw. No player has been able to win the game";
+            this.players.clear();
+        }
+        else {
             this.lastMove = "%s made a move of %s".formatted(currentTurn.getName(), move);
             this.currentTurn = currentTurn.opposite();
         }
@@ -83,6 +93,7 @@ public class GameState {
     public void resetToReadyToStart() {
         this.status = GameStatus.READY_TO_PLAY;
         this.number = null;
+        this.restNumber = null;
         this.lastMove = null;
         this.currentTurn = null;
         this.winner = null;

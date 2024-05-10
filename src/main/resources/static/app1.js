@@ -69,15 +69,23 @@ function handleGameEvent(message) {
     var data = JSON.parse(message.body);
     var currentNumber = data.currentNumber;
     var playerTurn = data.playerTurn;
-    displayCurrentNumber(currentNumber);
+    disableStartButton();
+    disableDisconnectButton();
     var winner = data.winner;
-    if (winner !== null) {
+    if (winner !== null && winner !== "draw") {
+        displayCurrentNumber(currentNumber);
         displayWinnerMessage(winner);
         displayReloadGame();
-    } else if (playerTurn === "player1") {
+    } else if(winner === "draw") {
+        displayCurrentNumberAsDraw();
+        displayDrawMessage();
+        displayReloadGame();}
+    else if (playerTurn === "player1") {
+        displayCurrentNumber(currentNumber);
         displayButtons();
         displayYourTurnMessage();
     } else if (playerTurn === "player2") {
+        displayCurrentNumber(currentNumber);
         displayOpponentTurnMessage();
         hideButtons();
     }
@@ -85,6 +93,10 @@ function handleGameEvent(message) {
 
 function displayCurrentNumber(currentNumber) {
     $("#currentNumber").text(currentNumber);
+}
+
+function displayCurrentNumberAsDraw() {
+    $("#currentNumber").text("Draw");
 }
 
 function displayButtons() {
@@ -95,8 +107,16 @@ function hideButtons() {
     $("#moveButtonsRow").hide()
 }
 
+function disableStartButton() {
+    $("#start").prop("disabled", true);
+}
+
+function disableDisconnectButton() {
+    $("#disconnect").prop("disabled", true);
+}
+
 function displayYourTurnMessage() {
-    $("#boardMessage").text("It's your turn selec {-1,0,1} so that the current number is divisible by 3.");
+    $("#boardMessage").text("It's your turn select any of these numbers {-1,0,1} so that the current number is divisible by 3.");
 }
 
 function displayOpponentTurnMessage() {
@@ -105,6 +125,10 @@ function displayOpponentTurnMessage() {
 
 function displayWinnerMessage(winner) {
     $("#boardMessage").text("Game Concluded. The winner is " + winner);
+}
+
+function displayDrawMessage() {
+    $("#boardMessage").text("Game Concluded. It's a draw.");
 }
 
 function displayReloadGame() {
@@ -124,9 +148,7 @@ function reloadGame() {
 }
 
 $(function () {
-    $("form").on('submit', function (e) {
-        e.preventDefault();
-    });
+    $("form").on('submit', function (e) { e.preventDefault(); });
     $( "#connect" ).click(function() { connect(); });
     $( "#disconnect" ).click(function() { disconnect(); });
     $( "#send" ).click(function() { sendMessage(); });

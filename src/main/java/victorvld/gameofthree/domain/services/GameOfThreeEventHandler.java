@@ -53,30 +53,31 @@ public class GameOfThreeEventHandler {
         this.gameState.setLastMove("No move has been made yet");
         this.gameState.setCurrentTurn(receivingPlayer);
         this.gameState.setStatus(GameStatus.STARTED);
-        var message = "Game started by %s on mode %s. Initial number = %s".formatted(event.startingPlayer(), event.mode(), event.initialNumber());
+        var message = "Game started by %s on mode %s. Initial number = %s".formatted(event.startingPlayer(),
+                event.mode(), event.initialNumber());
         this.logger.info(message);
         this.messagingTemplate.convertAndSend(TOPIC_MESSAGES, new Message(message));
         return this.gameState.generateBoardSnapshot();
     }
 
     public GameBoard handleMoveEvent(MoveEvent event) {
-        var beforeMoveSnapshot = this.gameState.generateBoardSnapshot();
+        var beforeSnap = this.gameState.generateBoardSnapshot();
         this.gameState.applyMove(event.move());
-        var afterMoveSnapshot = this.gameState.generateBoardSnapshot();
-        if (this.gameState.isGameFinished()) {
+        var afterSnap = this.gameState.generateBoardSnapshot();
+        this.handleReporting("Move made by %s. Previous number=%s, added number=%s, resulting number=%s"
+                .formatted(beforeSnap.playerTurn(), beforeSnap.currentNumber(), event.move(), afterSnap.currentNumber()));
+        if (gameState.isGameFinished() && afterSnap.currentNumber() == 1 && afterSnap.restNumber() == 0) {
             gameState.resetToReadyToStart();
-            var message = "Game finished. %s won the game".formatted(this.gameState.getWinner());
-            this.logger.info(message);
-            this.messagingTemplate.convertAndSend(TOPIC_MESSAGES, new Message(message));
-        } else {
-            var message = "Move made by %s. Previous number=%s, added number=%s, resulting number=%s".formatted(
-                    beforeMoveSnapshot.playerTurn(),
-                    beforeMoveSnapshot.currentNumber(),
-                    event.move(),
-                    afterMoveSnapshot.currentNumber()
-            );
-            this.messagingTemplate.convertAndSend(TOPIC_MESSAGES, new Message(message));
+            this.handleReporting("Game finished. %s won the game".formatted(beforeSnap.playerTurn()));
+        } else if (gameState.isGameFinished() && afterSnap.currentNumber() < 2) {
+            gameState.resetToReadyToStart();
+            this.handleReporting("The game ends in a draw. No player has been able to win the game");
         }
-        return afterMoveSnapshot;
+        return afterSnap;
+    }
+
+    private void handleReporting(String message) {
+        this.logger.info(message);
+        this.messagingTemplate.convertAndSend(TOPIC_MESSAGES, new Message(message));
     }
 }

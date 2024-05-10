@@ -3,7 +3,7 @@
 <head>
     <title>Game of Three</title>
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/main2.css" rel="stylesheet">
+    <link href="/main.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
@@ -12,7 +12,7 @@
 <body>
 <div id="main-content" class="container">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form class="form-inline">
                 <div class="form-group">
                     <h1>Game of Three</h1>
@@ -42,9 +42,9 @@
             <span id="gameStatus"></span> <span id="winner"></span>
         </div>
         <div class="row row-centered">
-            <div class="col-sm-3 col-centered">
+            <div class="col-sm-12 col-centered">
                 <div class="row row-centered">
-                    <div class="text-block h3">CurrentValue</div>
+                    <div class="text-block h3">Current Number</div>
                 </div>
                 <div class="row row-centered">
                     <div id="currentNumber" class="text-block h2">*</div>
