@@ -1,6 +1,7 @@
 package victorvld.gameofthree.domain.entities;
 
 import victorvld.gameofthree.controller.dto.GameBoard;
+import victorvld.gameofthree.controller.dto.StartGameEvent;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,22 +17,6 @@ public class GameState {
     private String lastMove;
 
     public GameState() {
-    }
-
-    public void setStatus(GameStatus status) {
-        this.status = status;
-    }
-
-    public void setCurrentTurn(Player player) {
-        this.currentTurn = player;
-    }
-
-    public void setLastMove(String lastMove) {
-        this.lastMove = lastMove;
-    }
-
-    public void setInitialNumber(Integer integer) {
-        this.number = integer;
     }
 
     public GameBoard generateBoardSnapshot() {
@@ -61,7 +46,17 @@ public class GameState {
         return players.contains(Player.of(playerId));
     }
 
-    public void applyMove(int move) {
+    public void apply(StartGameEvent event) {
+        var receivingPlayer = Player.of(event.startingPlayer()).opposite();
+        this.number = event.initialNumber();
+        this.lastMove = "No move has been made yet";
+        this.currentTurn = receivingPlayer;
+        this.status = GameStatus.STARTED;
+        this.winner = null;
+        this.restNumber = null;
+    }
+
+    public void apply(int move) {
         this.restNumber = (number + move) % 3;
         this.number = (number + move) / 3;
         if (number == 1 && this.restNumber == 0) {
@@ -75,27 +70,23 @@ public class GameState {
             this.winner = "draw";
             this.lastMove = "The game ends in a draw. No player has been able to win the game";
             this.players.clear();
-        }
-        else {
+        } else {
+            // TODO: 10/05/2024 Write a test for this branch
             this.lastMove = "%s made a move of %s".formatted(currentTurn.getName(), move);
             this.currentTurn = currentTurn.opposite();
         }
     }
 
-    public boolean isGameFinished() {
-        return GameStatus.FINISHED.equals(this.status);
-    }
-
-    public String getWinner() {
-        return winner;
-    }
-
-    public void resetToReadyToStart() {
+    public void reset() {
         this.status = GameStatus.READY_TO_PLAY;
         this.number = null;
         this.restNumber = null;
         this.lastMove = null;
         this.currentTurn = null;
         this.winner = null;
+    }
+
+    public boolean isGameFinished() {
+        return GameStatus.FINISHED.equals(this.status);
     }
 }

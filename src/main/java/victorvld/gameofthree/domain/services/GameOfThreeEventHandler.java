@@ -10,7 +10,6 @@ import victorvld.gameofthree.controller.dto.StartGameEvent;
 import victorvld.gameofthree.controller.exceptions.PlayerConnectionException;
 import victorvld.gameofthree.controller.exceptions.StartGameException;
 import victorvld.gameofthree.domain.entities.GameState;
-import victorvld.gameofthree.domain.entities.GameStatus;
 import victorvld.gameofthree.domain.entities.Player;
 
 public class GameOfThreeEventHandler {
@@ -47,12 +46,7 @@ public class GameOfThreeEventHandler {
     }
 
     private GameBoard processStartGameEvent(StartGameEvent event) {
-        var startingPlayer = Player.of(event.startingPlayer());
-        var receivingPlayer = startingPlayer.opposite();
-        this.gameState.setInitialNumber(event.initialNumber());
-        this.gameState.setLastMove("No move has been made yet");
-        this.gameState.setCurrentTurn(receivingPlayer);
-        this.gameState.setStatus(GameStatus.STARTED);
+        this.gameState.apply(event);
         var message = "Game started by %s on mode %s. Initial number = %s".formatted(event.startingPlayer(),
                 event.mode(), event.initialNumber());
         this.logger.info(message);
@@ -62,15 +56,15 @@ public class GameOfThreeEventHandler {
 
     public GameBoard handleMoveEvent(MoveEvent event) {
         var beforeSnap = this.gameState.generateBoardSnapshot();
-        this.gameState.applyMove(event.move());
+        this.gameState.apply(event.move());
         var afterSnap = this.gameState.generateBoardSnapshot();
         this.handleReporting("Move made by %s. Previous number=%s, added number=%s, resulting number=%s"
                 .formatted(beforeSnap.playerTurn(), beforeSnap.currentNumber(), event.move(), afterSnap.currentNumber()));
         if (gameState.isGameFinished() && afterSnap.currentNumber() == 1 && afterSnap.restNumber() == 0) {
-            gameState.resetToReadyToStart();
+            gameState.reset();
             this.handleReporting("Game finished. %s won the game".formatted(beforeSnap.playerTurn()));
         } else if (gameState.isGameFinished() && afterSnap.currentNumber() < 2) {
-            gameState.resetToReadyToStart();
+            gameState.reset();
             this.handleReporting("The game ends in a draw. No player has been able to win the game");
         }
         return afterSnap;
