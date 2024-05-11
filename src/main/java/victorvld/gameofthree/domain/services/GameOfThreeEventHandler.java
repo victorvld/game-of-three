@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import victorvld.gameofthree.controller.dto.MoveEvent;
 import victorvld.gameofthree.controller.dto.GameBoard;
-import victorvld.gameofthree.controller.dto.Message;
+import victorvld.gameofthree.controller.dto.GameMessage;
 import victorvld.gameofthree.controller.dto.StartGameEvent;
 import victorvld.gameofthree.controller.exceptions.PlayerConnectionException;
 import victorvld.gameofthree.controller.exceptions.StartGameException;
@@ -33,7 +33,7 @@ public class GameOfThreeEventHandler {
         }
     }
 
-    public Message handleConnectEvent(String playerId) {
+    public GameMessage handleConnectEvent(String playerId) {
         if (gameState.areBothPlayerConnected()) {
             throw new PlayerConnectionException("Connection Error: Game is full");
         } else if (gameState.containsPlayer(playerId)) {
@@ -41,7 +41,7 @@ public class GameOfThreeEventHandler {
         } else {
             this.gameState.add(Player.of(playerId));
             this.logger.info("{} connected to the game", playerId);
-            return new Message("%s connected to the game".formatted(playerId));
+            return new GameMessage("%s connected to the game".formatted(playerId));
         }
     }
 
@@ -50,7 +50,7 @@ public class GameOfThreeEventHandler {
         var message = "Game started by %s on mode %s. Initial number = %s".formatted(event.startingPlayer(),
                 event.mode(), event.initialNumber());
         this.logger.info(message);
-        this.messagingTemplate.convertAndSend(TOPIC_MESSAGES, new Message(message));
+        this.messagingTemplate.convertAndSend(TOPIC_MESSAGES, new GameMessage(message));
         return this.gameState.generateBoardSnapshot();
     }
 
@@ -72,6 +72,6 @@ public class GameOfThreeEventHandler {
 
     private void handleReporting(String message) {
         this.logger.info(message);
-        this.messagingTemplate.convertAndSend(TOPIC_MESSAGES, new Message(message));
+        this.messagingTemplate.convertAndSend(TOPIC_MESSAGES, new GameMessage(message));
     }
 }

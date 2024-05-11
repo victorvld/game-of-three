@@ -3,7 +3,7 @@ package victorvld.gameofthree.controller;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import victorvld.gameofthree.controller.dto.Message;
+import victorvld.gameofthree.controller.dto.GameMessage;
 import victorvld.gameofthree.controller.exceptions.PlayerConnectionException;
 import victorvld.gameofthree.controller.exceptions.StartGameException;
 
@@ -11,13 +11,13 @@ import victorvld.gameofthree.controller.exceptions.StartGameException;
 public class GlobalExceptionHandler {
     @MessageExceptionHandler
     @SendToUser("/queue/errors")
-    public Message handlePlayerConnectionException(PlayerConnectionException e) {
-        return new Message(e.getMessage());
+    public GameMessage handlePlayerConnectionException(PlayerConnectionException e) {
+        return new GameMessage(e.getMessage());
     }
 
     @MessageExceptionHandler
     @SendToUser("/queue/errors")
-    public Message handleStartGameException(StartGameException e) {
-        return new Message(e.getMessage());
+    public GameMessage handleStartGameException(StartGameException e) {
+        return new GameMessage(e.getMessage());
     }
 }

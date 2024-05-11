@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GameOfThreeSpecTest {
+class DomainSpecificationTests {
     private GameOfThreeEventHandler underTest;
     private final SimpMessagingTemplate mockMessagingTemplate = Mockito.mock(SimpMessagingTemplate.class);
 
@@ -167,7 +167,7 @@ class GameOfThreeSpecTest {
 
         @ParameterizedTest
         @MethodSource("drawCasesProvider")
-        void shouldProcessEvents(Integer initialNumber, Integer move, Integer expectedNumber) {
+        void shouldReportDraw(Integer initialNumber, Integer move, Integer expectedNumber) {
             var event = new MoveEvent(move);
 
             underTest.handleStartGameEvent(new StartGameEvent("player2", initialNumber, "manual"));
@@ -194,6 +194,39 @@ class GameOfThreeSpecTest {
                     Arguments.of(3, -1, 0),
                     Arguments.of(5, -1, 1),
                     Arguments.of(6, -1, 1)
+            );
+        }
+    }
+
+    @Nested
+    class WhenGameIsOnGoing {
+
+        @BeforeEach
+        void setUp() {
+            underTest.handleConnectEvent("player1");
+            underTest.handleConnectEvent("player2");
+        }
+        @ParameterizedTest
+        @MethodSource("onGoingCasesProvider")
+        void shouldProcessMoveEvent(Integer initialNumber, Integer move, Integer expectedNumber) {
+            var event = new MoveEvent(move);
+
+            underTest.handleStartGameEvent(new StartGameEvent("player2", initialNumber, "manual"));
+            var gameBoard = underTest.handleMoveEvent(event);
+
+            assertEquals("player2", gameBoard.playerTurn());
+            assertEquals(expectedNumber, gameBoard.currentNumber());
+            assertEquals("manual", gameBoard.gameMode());
+            assertEquals("player1 made a move of %s".formatted(move), gameBoard.lastMove());
+            assertEquals(0, gameBoard.restNumber());
+            assertNull(gameBoard.winner());
+        }
+
+        private static Stream<Arguments> onGoingCasesProvider() {
+            return Stream.of(
+                    Arguments.of(15, 0, 5),
+                    Arguments.of(16, -1, 5),
+                    Arguments.of(14, 1, 5)
             );
         }
     }

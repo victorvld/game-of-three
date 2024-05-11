@@ -6,7 +6,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import victorvld.gameofthree.controller.dto.GameBoard;
-import victorvld.gameofthree.controller.dto.Message;
+import victorvld.gameofthree.controller.dto.GameMessage;
 import victorvld.gameofthree.controller.dto.MoveEvent;
 import victorvld.gameofthree.controller.dto.StartGameEvent;
 import victorvld.gameofthree.domain.services.GameOfThreeEventHandler;
@@ -22,7 +22,7 @@ public class GameOfThreeController {
 
     @MessageMapping("/connect/{playerId}")
     @SendTo("/topic/messages")
-    public Message connect(@DestinationVariable String playerId) {
+    public GameMessage connect(@DestinationVariable String playerId) {
         return eventHandler.handleConnectEvent(playerId);
     }
 
