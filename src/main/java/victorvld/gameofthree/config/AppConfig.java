@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import victorvld.gameofthree.domain.entities.GameState;
 import victorvld.gameofthree.domain.services.GameOfThreeEventHandler;
+import victorvld.gameofthree.domain.services.PlayerRegistry;
 
 @Configuration
 public class AppConfig {
@@ -17,6 +18,6 @@ public class AppConfig {
     }
     @Bean
     public GameOfThreeEventHandler gameEventHandler() {
-        return new GameOfThreeEventHandler(messagingTemplate, new GameState());
+        return new GameOfThreeEventHandler(messagingTemplate, new GameState(), new PlayerRegistry());
     }
 }

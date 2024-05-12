@@ -24,7 +24,7 @@ class DomainSpecificationTests {
 
     @BeforeEach
     void setUp() {
-        underTest = new GameOfThreeEventHandler(mockMessagingTemplate, new GameState());
+        underTest = new GameOfThreeEventHandler(mockMessagingTemplate, new GameState(), new PlayerRegistry());
     }
 
     @Nested

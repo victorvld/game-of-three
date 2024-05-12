@@ -17,14 +17,16 @@ public class GameOfThreeEventHandler {
     private final Logger logger = LoggerFactory.getLogger(GameOfThreeEventHandler.class);
     private final SimpMessagingTemplate messagingTemplate;
     private final GameState gameState;
+    private final PlayerRegistry registry;
 
-    public GameOfThreeEventHandler(SimpMessagingTemplate messagingTemplate, GameState gameState) {
+    public GameOfThreeEventHandler(SimpMessagingTemplate messagingTemplate, GameState gameState, PlayerRegistry registry) {
         this.messagingTemplate = messagingTemplate;
         this.gameState = gameState;
+        this.registry = registry;
     }
 
     public GameBoard handleStartGameEvent(StartGameEvent event) {
-        if (!gameState.areBothPlayerConnected()) {
+        if (!registry.areBothPlayerConnected()) {
             throw new StartGameException("Error: Not enough players to start the game");
         } else if (gameState.isGameStarted()) {
             throw new StartGameException("Error: Game is already started");
@@ -34,12 +36,12 @@ public class GameOfThreeEventHandler {
     }
 
     public GameMessage handleConnectEvent(String playerId) {
-        if (gameState.areBothPlayerConnected()) {
+        if (registry.areBothPlayerConnected()) {
             throw new PlayerConnectionException("Connection Error: Game is full");
-        } else if (gameState.containsPlayer(playerId)) {
+        } else if (registry.containsPlayer(playerId)) {
             throw new PlayerConnectionException("Connection Error: %s is already connected".formatted(playerId));
         } else {
-            this.gameState.add(Player.of(playerId));
+            this.registry.add(Player.of(playerId));
             this.logger.info("{} connected to the game", playerId);
             return new GameMessage("%s connected to the game".formatted(playerId));
         }
@@ -63,8 +65,10 @@ public class GameOfThreeEventHandler {
         if (gameState.isGameFinished() && afterSnap.currentNumber() == 1 && afterSnap.restNumber() == 0) {
             gameState.reset();
             this.handleReporting("Game finished. %s won the game".formatted(beforeSnap.playerTurn()));
+            this.registry.reset();
         } else if (gameState.isGameFinished() && afterSnap.currentNumber() < 2) {
-            gameState.reset();
+            this.gameState.reset();
+            this.registry.reset();
             this.handleReporting("The game ends in a draw. No player has been able to win the game");
         }
         return afterSnap;
