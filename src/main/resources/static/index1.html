@@ -2,12 +2,13 @@
 <html>
 <head>
     <title>Game of Three</title>
-    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/main.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="/app1.js"></script>
+    <script src="/player1.js"></script>
+    <script src="/ui.js"></script>
 </head>
 <body>
 <div id="main-content" class="container">
@@ -20,8 +21,7 @@
                 <div class="form-group">
                     <label for="connect" class="mr-2">Connect to game server:</label>
                     <button id="connect" class="btn btn-primary mr-2" type="submit">Connect</button>
-                    <button id="disconnect" class="btn btn-secondary" type="submit"
-                            disabled="disabled">Disconnect
+                    <button id="disconnect" class="btn btn-secondary" type="submit" disabled="disabled">Disconnect
                     </button>
                 </div>
             </form>
@@ -32,6 +32,16 @@
             <form class="form-inline">
                 <div class="form-group">
                     <button id="start" class="btn btn-success" type="submit" disabled="disabled">Start New Game</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-inline">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="toggleSwitch">
+                    <label class="form-check-label" for="toggleSwitch">Manual</label>
                 </div>
             </form>
         </div>
@@ -58,8 +68,10 @@
                 <div class="row row-centered">
                     <div id="boardMessage" class="text-block h4">Waiting for players to start a new game</div>
                 </div>
-                <div id="reloadGameRow" class="row row-centered" style="visibility: hidden;">
-                    <button id="reloadGame" type="button" class="btn btn-primary custom" onclick="reloadGame()">Reload Game</button>
+                <div id="reloadGameRow" class="row justify-content-center" style="visibility: hidden;">
+                    <button id="reloadGame" type="button" class="btn btn-primary custom" onclick="reloadGame()">Reload
+                        Game
+                    </button>
                 </div>
             </div>
         </div>
